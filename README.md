@@ -5,7 +5,7 @@ FoodRush is a local full-stack restaurant ordering system built from the provide
 ## Project Structure
 
 ```text
-foodrush/
+Food-Ordering-System/
   backend/
     server.js
     package.json
