@@ -1,5 +1,5 @@
 import FoodOrderApp from './FoodOrderApp.jsx';
-import './FoodOrderApp.css';
+import './index.css';
 
 function App() {
   return <FoodOrderApp />;
