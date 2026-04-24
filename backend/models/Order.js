@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema({
   },
   deliveryAddress: { street: String, city: String, zip: String },
   payment: {
-    method: { type: String, enum: ['card', 'wallet', 'cod'], default: 'cod' },
+    method: { type: String, enum: ['card', 'wallet', 'cod', 'Card', 'Cash', 'UPI', 'UPI / QR'], default: 'Cash' },
     status: { type: String, default: 'pending' },
     stripePaymentIntentId: String,
   },
