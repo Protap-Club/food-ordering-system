@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
   customer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  customerName: String,
+  customerMobile: String,
+  token: String,
+  type: { type: String, enum: ['Dine In', 'Takeaway', 'Delivery'], default: 'Dine In' },
+  tableNumber: Number,
+  tableId: String,
   restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
   items: [{
     menuItem: { type: mongoose.Schema.Types.ObjectId, ref: 'MenuItem' },
@@ -12,8 +18,8 @@ const orderSchema = new mongoose.Schema({
   }],
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'],
-    default: 'pending',
+    enum: ['new', 'preparing', 'ready', 'done', 'pending', 'confirmed', 'out_for_delivery', 'delivered', 'cancelled'],
+    default: 'new',
   },
   deliveryAddress: { street: String, city: String, zip: String },
   payment: {
@@ -22,6 +28,9 @@ const orderSchema = new mongoose.Schema({
     stripePaymentIntentId: String,
   },
   subtotal: Number,
+  cgst: Number,
+  sgst: Number,
+  gst: Number,
   deliveryFee: Number,
   tax: Number,
   total: Number,

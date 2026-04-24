@@ -11,5 +11,6 @@ router.put('/:id', auth(['admin', 'restaurant']), restaurantController.updateRes
 
 router.get('/:id/menu', menuController.getMenu);
 router.post('/:id/menu', auth(['admin', 'restaurant']), menuController.addMenuItem);
+router.patch('/:id/menu/:itemId/availability', menuController.toggleAvailability);
 
 module.exports = router;
