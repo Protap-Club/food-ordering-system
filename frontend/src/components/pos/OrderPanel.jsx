@@ -1,14 +1,16 @@
 import React from 'react'
 import { useAppStore } from '../../store/useAppStore'
 import { calculateBill } from '../../utils/invoice'
+import { ShoppingBag, Minus, Plus, Trash2, Pause, CreditCard, X } from 'lucide-react'
+import EmptyState from '../ui/EmptyState'
 
 export default function OrderPanel() {
-  const { 
-    activeOrder, 
-    setOrderType, 
-    setCustomerInfo, 
-    updateItemQty, 
-    removeItemFromOrder, 
+  const {
+    activeOrder,
+    setOrderType,
+    setCustomerInfo,
+    updateItemQty,
+    removeItemFromOrder,
     clearActiveOrder,
     holdActiveOrder,
     openPaymentModal
@@ -18,59 +20,50 @@ export default function OrderPanel() {
   const isOrderEmpty = activeOrder.items.length === 0
 
   return (
-    <div style={{
-      backgroundColor: 'var(--bg-panel)',
-      borderRadius: 'var(--radius-lg)',
+    <div className="glass-panel" style={{
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
-      border: 'var(--border)'
+      overflow: 'hidden',
     }}>
-      {/* Header & Order Type */}
-      <div style={{ padding: '24px', borderBottom: 'var(--border-light)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <h3>Current Order</h3>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button 
-              onClick={() => setOrderType('Dine In')}
-              style={{
-                padding: '6px 12px',
-                borderRadius: 'var(--radius-sm)',
-                backgroundColor: activeOrder.type === 'Dine In' ? 'var(--c-orange)' : 'var(--bg-elevated)',
-                fontSize: '0.85em'
-              }}
-            >
-              Dine In
-            </button>
-            <button 
-              onClick={() => setOrderType('Takeaway')}
-              style={{
-                padding: '6px 12px',
-                borderRadius: 'var(--radius-sm)',
-                backgroundColor: activeOrder.type === 'Takeaway' ? 'var(--c-orange)' : 'var(--bg-elevated)',
-                fontSize: '0.85em'
-              }}
-            >
-              Takeaway
-            </button>
+      {/* ── Header ─────────────────────────────────────────── */}
+      <div style={{ padding: 'var(--sp-5)', borderBottom: '1px solid var(--glass-border)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-3)' }}>
+          <h3 style={{ fontSize: '1.05rem' }}>Current Order</h3>
+          <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
+            {['Dine In', 'Takeaway'].map(type => (
+              <button
+                key={type}
+                onClick={() => setOrderType(type)}
+                className={activeOrder.type === type ? 'chip chip-active' : 'chip'}
+                style={{ fontSize: '0.8rem' }}
+              >
+                {type}
+              </button>
+            ))}
           </div>
         </div>
-        
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <input 
-            type="text" 
-            placeholder="Customer Name (opt)" 
+
+        <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
+          <input
+            type="text"
+            placeholder="Customer Name (opt)"
             value={activeOrder.customerName}
             onChange={(e) => setCustomerInfo(e.target.value, activeOrder.customerMobile)}
-            style={{ flex: 1, padding: '8px' }}
+            style={{ flex: 1, padding: 'var(--sp-2) var(--sp-3)', fontSize: '0.85rem', borderRadius: 'var(--radius-sm)' }}
           />
           {activeOrder.type === 'Dine In' && (
             <div style={{
-              padding: '8px 12px',
-              backgroundColor: 'var(--bg-elevated)',
+              padding: 'var(--sp-2) var(--sp-3)',
+              background: 'var(--brand-subtle)',
               borderRadius: 'var(--radius-sm)',
-              color: 'var(--c-orange)',
-              fontWeight: 'bold'
+              color: 'var(--brand)',
+              fontWeight: 700,
+              fontSize: '0.85rem',
+              border: '1px solid rgba(232,145,58,0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              whiteSpace: 'nowrap',
             }}>
               {activeOrder.tableNumber ? `Table ${activeOrder.tableNumber}` : 'No Table'}
             </div>
@@ -78,39 +71,115 @@ export default function OrderPanel() {
         </div>
       </div>
 
-      {/* Item List */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
+      {/* ── Item List ──────────────────────────────────────── */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--sp-4) var(--sp-5)' }}>
         {isOrderEmpty ? (
-          <div style={{ 
-            height: '100%', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            color: 'var(--t-tertiary)',
-            textAlign: 'center'
-          }}>
-            Add items from the menu<br/>to start a new order.
-          </div>
+          <EmptyState
+            icon={ShoppingBag}
+            title="No items yet"
+            subtitle="Tap items from the menu to add them to this order."
+          />
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {activeOrder.items.map(item => (
-              <div key={item.itemId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 'bold' }}>{item.name}</div>
-                  <div style={{ color: 'var(--t-secondary)', fontSize: '0.85em' }}>₹{item.price} each</div>
-                </div>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'var(--bg-elevated)', borderRadius: 'var(--radius-sm)' }}>
-                    <button onClick={() => updateItemQty(item.itemId, item.qty - 1)} style={{ padding: '4px 12px', color: 'var(--t-secondary)' }}>-</button>
-                    <span style={{ width: '20px', textAlign: 'center', fontWeight: 'bold' }}>{item.qty}</span>
-                    <button onClick={() => updateItemQty(item.itemId, item.qty + 1)} style={{ padding: '4px 12px', color: 'var(--c-orange)' }}>+</button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+            {activeOrder.items.map((item, index) => (
+              <div
+                key={item.itemId}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: 'var(--sp-3)',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--bg-surface)',
+                  border: 'var(--border)',
+                  animation: `fadeInUp var(--duration-slow) var(--ease-out) both`,
+                  animationDelay: `${index * 30}ms`,
+                }}
+              >
+                {/* Item info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{
+                    fontWeight: 600,
+                    fontSize: '0.9rem',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}>
+                    {item.name}
                   </div>
-                  <div style={{ width: '60px', textAlign: 'right', fontWeight: 'bold' }}>
+                  <div style={{ color: 'var(--text-tertiary)', fontSize: '0.75rem', marginTop: '1px' }}>
+                    ₹{item.price} each
+                  </div>
+                </div>
+
+                {/* Controls */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', flexShrink: 0 }}>
+                  {/* Qty Stepper */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    background: 'var(--bg-elevated)',
+                    borderRadius: 'var(--radius-sm)',
+                    border: 'var(--border)',
+                  }}>
+                    <button
+                      onClick={() => updateItemQty(item.itemId, item.qty - 1)}
+                      style={{
+                        padding: 'var(--sp-1) var(--sp-2)',
+                        color: 'var(--text-secondary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <span style={{
+                      width: 24,
+                      textAlign: 'center',
+                      fontWeight: 700,
+                      fontSize: '0.9rem',
+                      fontFamily: 'var(--font-mono)',
+                    }}>
+                      {item.qty}
+                    </span>
+                    <button
+                      onClick={() => updateItemQty(item.itemId, item.qty + 1)}
+                      style={{
+                        padding: 'var(--sp-1) var(--sp-2)',
+                        color: 'var(--brand)',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
+
+                  {/* Line total */}
+                  <div style={{
+                    width: 56,
+                    textAlign: 'right',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    fontFamily: 'var(--font-display)',
+                  }}>
                     ₹{item.price * item.qty}
                   </div>
-                  <button onClick={() => removeItemFromOrder(item.itemId)} style={{ color: 'var(--s-danger)', padding: '4px' }}>
-                    🗑
+
+                  {/* Delete */}
+                  <button
+                    onClick={() => removeItemFromOrder(item.itemId)}
+                    style={{
+                      color: 'var(--danger)',
+                      padding: 'var(--sp-1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      borderRadius: 'var(--radius-xs)',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--danger-bg)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+                  >
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
@@ -119,42 +188,69 @@ export default function OrderPanel() {
         )}
       </div>
 
-      {/* Bill Summary & Actions */}
-      <div style={{ padding: '24px', borderTop: 'var(--border-light)', backgroundColor: 'rgba(0,0,0,0.2)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: 'var(--t-secondary)' }}>
+      {/* ── Bill Summary & Actions ─────────────────────────── */}
+      <div style={{
+        padding: 'var(--sp-5)',
+        borderTop: '1px solid var(--glass-border)',
+        background: 'var(--glass-highlight)',
+      }}>
+        {/* Subtotal + Tax */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--sp-2)', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
           <span>Subtotal</span>
           <span>₹{bill.subtotal}</span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', color: 'var(--t-secondary)', fontSize: '0.85em' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--sp-3)', color: 'var(--text-tertiary)', fontSize: '0.8rem' }}>
           <span>GST (5%)</span>
           <span>₹{bill.gst}</span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', fontSize: '1.5em', fontWeight: 'bold', color: 'var(--c-orange)' }}>
+
+        <div className="divider" style={{ margin: 'var(--sp-3) 0' }} />
+
+        {/* Total */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: 'var(--sp-5)',
+          fontFamily: 'var(--font-display)',
+          fontSize: '1.5rem',
+          fontWeight: 800,
+          color: 'var(--brand)',
+          letterSpacing: '-0.02em',
+        }}>
           <span>Total</span>
           <span>₹{bill.total}</span>
         </div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          <button 
+
+        {/* Action Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-3)' }}>
+          <button
+            className="btn btn-ghost"
             onClick={clearActiveOrder}
             disabled={isOrderEmpty}
-            style={{ padding: '16px', backgroundColor: 'var(--bg-elevated)', borderRadius: 'var(--radius-md)', opacity: isOrderEmpty ? 0.5 : 1 }}
+            style={{ justifyContent: 'center' }}
           >
-            Clear
+            <X size={16} /> Clear
           </button>
-          <button 
+          <button
+            className="btn"
             onClick={holdActiveOrder}
             disabled={isOrderEmpty}
-            style={{ padding: '16px', backgroundColor: 'var(--s-warning-bg)', color: 'var(--s-warning)', borderRadius: 'var(--radius-md)', opacity: isOrderEmpty ? 0.5 : 1 }}
+            style={{
+              background: 'var(--warning-bg)',
+              color: 'var(--warning)',
+              border: '1px solid var(--warning-border)',
+              justifyContent: 'center',
+            }}
           >
-            Hold Order
+            <Pause size={16} /> Hold
           </button>
-          <button 
+          <button
+            className="btn btn-success btn-lg"
             onClick={openPaymentModal}
             disabled={isOrderEmpty}
-            style={{ gridColumn: '1 / -1', padding: '16px', backgroundColor: 'var(--s-success)', color: '#000', borderRadius: 'var(--radius-md)', fontWeight: 'bold', opacity: isOrderEmpty ? 0.5 : 1 }}
+            style={{ gridColumn: '1 / -1', justifyContent: 'center' }}
           >
-            Pay & Place Order
+            <CreditCard size={18} /> Pay & Place Order
           </button>
         </div>
       </div>
