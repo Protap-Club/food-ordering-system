@@ -704,6 +704,12 @@ input::placeholder {
   :root {
     --sidebar-width: 64px;
   }
+  .stat-card {
+    padding: var(--sp-4);
+  }
+  .stat-value {
+    font-size: 1.75rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -712,5 +718,17 @@ input::placeholder {
   }
   body {
     font-size: 13px;
+    overflow: auto;
+  }
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  .glass-card {
+    border-radius: var(--radius-md);
+  }
+  .modal-content {
+    margin: var(--sp-4);
+    max-width: calc(100vw - var(--sp-8));
+    border-radius: var(--radius-lg);
   }
 }

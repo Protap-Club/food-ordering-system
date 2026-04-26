@@ -10,9 +10,11 @@ const TASTE_CONFIG = {
   crispy: { icon: Sparkles,   color: '#D97706', bg: 'rgba(217,119,6,0.12)',   label: 'Crispy' },
   mild:   { icon: Leaf,       color: '#34D399', bg: 'rgba(52,211,153,0.12)',  label: 'Mild' },
   smoky:  { icon: Wind,       color: '#9CA3AF', bg: 'rgba(156,163,175,0.12)', label: 'Smoky' },
-  tangy:  { icon: Droplets,   color: '#F472B6', bg: 'rgba(244,114,182,0.12)', label: 'Tangy' },
-  umami:  { icon: Sparkles,   color: '#FB923C', bg: 'rgba(251,146,60,0.12)',  label: 'Umami' },
-  soft:   { icon: Cookie,     color: '#FCA5A5', bg: 'rgba(252,165,165,0.12)', label: 'Soft' },
+  tangy:      { icon: Droplets,   color: '#F472B6', bg: 'rgba(244,114,182,0.12)', label: 'Tangy' },
+  bitter:     { icon: Wind,       color: '#78716C', bg: 'rgba(120,113,108,0.12)', label: 'Bitter' },
+  refreshing: { icon: Leaf,       color: '#2DD4BF', bg: 'rgba(45,212,191,0.12)',  label: 'Refreshing' },
+  umami:      { icon: Sparkles,   color: '#FB923C', bg: 'rgba(251,146,60,0.12)',  label: 'Umami' },
+  soft:       { icon: Cookie,     color: '#FCA5A5', bg: 'rgba(252,165,165,0.12)', label: 'Soft' },
 }
 
 export default function TasteChip({ taste }) {

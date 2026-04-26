@@ -62,6 +62,7 @@ export default function MenuPanel() {
         overflowY: 'auto',
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+        gridAutoRows: 'min-content',
         gap: 'var(--sp-4)',
         alignContent: 'start',
         paddingRight: 'var(--sp-2)',
