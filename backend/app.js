@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
 const authRoutes = require('./routes/authRoutes');
 const restaurantRoutes = require('./routes/restaurantRoutes');
@@ -13,16 +14,10 @@ const searchRoutes = require('./routes/searchRoutes');
 const tableRoutes = require('./routes/tableRoutes');
 const menuRoutes = require('./routes/menuRoutes');
 
+dotenv.config();
 const app = express();
 
-const defaultOrigins = [
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-];
-
-const allowedOrigins = (process.env.CORS_ORIGIN || process.env.CLIENT_URL || defaultOrigins.join(','))
+const allowedOrigins = (process.env.CORS_ORIGIN || '')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
