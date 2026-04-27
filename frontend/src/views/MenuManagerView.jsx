@@ -78,12 +78,7 @@ export default function MenuManagerView() {
             {items.map(item => (
               <tr
                 key={item.id}
-                style={{
-                  borderBottom: '1px solid var(--glass-border)',
-                  transition: 'background var(--duration-fast) ease',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+                className="menu-row"
               >
                 <td style={{ padding: 'var(--sp-4) var(--sp-5)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>

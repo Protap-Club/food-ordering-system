@@ -1,7 +1,8 @@
 import React from 'react'
 import { useAppStore } from '../../store/useAppStore'
+import { useToast } from '../../store/useToast'
 import { calculateBill } from '../../utils/invoice'
-import { ShoppingBag, Minus, Plus, Trash2, Pause, CreditCard, X } from 'lucide-react'
+import { ShoppingBag, Minus, Plus, Trash2, Pause, CreditCard, X, RotateCcw, Clock } from 'lucide-react'
 import EmptyState from '../ui/EmptyState'
 
 export default function OrderPanel() {
@@ -13,11 +14,25 @@ export default function OrderPanel() {
     removeItemFromOrder,
     clearActiveOrder,
     holdActiveOrder,
-    openPaymentModal
+    resumeHeldOrder,
+    openPaymentModal,
+    heldOrders,
   } = useAppStore()
 
+  const showToast = useToast(s => s.showToast)
   const bill = calculateBill(activeOrder.items)
   const isOrderEmpty = activeOrder.items.length === 0
+
+  function handleHold() {
+    if (isOrderEmpty) return
+    holdActiveOrder()
+    showToast({ type: 'warning', message: 'Order held. Tap Resume to bring it back.', duration: 3000 })
+  }
+
+  function handleResume(index) {
+    resumeHeldOrder(index)
+    showToast({ type: 'info', message: 'Held order resumed.', duration: 2500 })
+  }
 
   return (
     <div className="glass-panel" style={{
@@ -70,6 +85,56 @@ export default function OrderPanel() {
           )}
         </div>
       </div>
+
+      {/* ── Held Orders Strip ───────────────────────────────── */}
+      {heldOrders.length > 0 && (
+        <div style={{
+          padding: 'var(--sp-3) var(--sp-5)',
+          borderBottom: '1px solid var(--glass-border)',
+          background: 'var(--warning-bg)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--sp-2)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', marginBottom: 'var(--sp-1)' }}>
+            <Clock size={13} style={{ color: 'var(--warning)' }} />
+            <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--warning)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              {heldOrders.length} Held {heldOrders.length === 1 ? 'Order' : 'Orders'}
+            </span>
+          </div>
+          {heldOrders.map((order, index) => (
+            <div
+              key={order.heldAt}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: 'var(--sp-2) var(--sp-3)',
+                background: 'var(--bg-elevated)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--warning-border)',
+                animation: 'fadeInUp var(--duration-normal) var(--ease-out) both',
+              }}
+            >
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {order.customerName || 'Guest'} · {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                </div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-tertiary)', marginTop: 1 }}>
+                  {order.type}{order.tableNumber ? ` · Table ${order.tableNumber}` : ''}
+                </div>
+              </div>
+              <button
+                onClick={() => handleResume(index)}
+                className="resume-btn"
+              >
+                <RotateCcw size={12} />
+                Resume
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* ── Item List ──────────────────────────────────────── */}
       <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--sp-4) var(--sp-5)' }}>
@@ -166,18 +231,10 @@ export default function OrderPanel() {
                     ₹{item.price * item.qty}
                   </div>
 
-                  {/* Delete */}
+                  {/* Delete — CSS hover via .delete-btn */}
                   <button
                     onClick={() => removeItemFromOrder(item.itemId)}
-                    style={{
-                      color: 'var(--danger)',
-                      padding: 'var(--sp-1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      borderRadius: 'var(--radius-xs)',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--danger-bg)' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+                    className="delete-btn"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -233,7 +290,7 @@ export default function OrderPanel() {
           </button>
           <button
             className="btn"
-            onClick={holdActiveOrder}
+            onClick={handleHold}
             disabled={isOrderEmpty}
             style={{
               background: 'var(--warning-bg)',
@@ -250,7 +307,7 @@ export default function OrderPanel() {
             disabled={isOrderEmpty}
             style={{ gridColumn: '1 / -1', justifyContent: 'center' }}
           >
-            <CreditCard size={18} /> Pay & Place Order
+            <CreditCard size={18} /> Pay &amp; Place Order
           </button>
         </div>
       </div>

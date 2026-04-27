@@ -125,21 +125,11 @@ export default function KDSCard({ order }) {
       {action && (
         <button
           onClick={() => updateOrderStatus(order.id, action.next)}
+          className="kds-action-btn"
           style={{
-            padding: 'var(--sp-4)',
             background: status.color,
             color: 'var(--text-inverse)',
-            fontWeight: 700,
-            fontSize: '0.9rem',
-            borderRadius: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 'var(--sp-2)',
-            transition: 'filter var(--duration-fast) ease',
           }}
-          onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.15)' }}
-          onMouseLeave={e => { e.currentTarget.style.filter = 'brightness(1)' }}
         >
           {action.label}
           <ChevronRight size={16} />
