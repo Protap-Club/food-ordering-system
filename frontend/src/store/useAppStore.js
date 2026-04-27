@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import api from '../api'
 import { calculateBill } from '../utils/invoice'
+import { useToast } from './useToast'
 
 const EMPTY_ACTIVE_ORDER = {
   tableId: null,
@@ -188,7 +189,7 @@ export const useAppStore = create(
           })
         } catch (error) {
           console.error("Failed to place order:", error)
-          alert("Error placing order")
+          useToast.getState().showToast({ type: 'error', message: 'Failed to place order. Please try again.' })
         }
       },
 

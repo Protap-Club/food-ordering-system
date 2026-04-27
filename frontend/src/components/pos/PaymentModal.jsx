@@ -58,7 +58,7 @@ export default function PaymentModal() {
           </div>
         </div>
 
-        {/* Payment Method Buttons */}
+        {/* Payment Method Buttons — CSS hover via .payment-method-btn */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
           {PAYMENT_METHODS.map(method => {
             const Icon = method.icon
@@ -66,31 +66,7 @@ export default function PaymentModal() {
               <button
                 key={method.id}
                 onClick={() => placeOrder(method.id)}
-                style={{
-                  padding: 'var(--sp-4) var(--sp-5)',
-                  background: 'var(--bg-surface)',
-                  border: 'var(--border)',
-                  borderRadius: 'var(--radius-md)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 'var(--sp-4)',
-                  fontWeight: 600,
-                  fontSize: '0.95rem',
-                  color: 'var(--text-primary)',
-                  transition: 'all var(--duration-normal) var(--ease-out)',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = 'var(--bg-hover)'
-                  e.currentTarget.style.borderColor = method.color + '44'
-                  e.currentTarget.style.transform = 'translateY(-1px)'
-                  e.currentTarget.style.boxShadow = `0 4px 16px ${method.color}22`
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = 'var(--bg-surface)'
-                  e.currentTarget.style.borderColor = 'var(--border-color)'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = 'none'
-                }}
+                className="payment-method-btn"
               >
                 <div style={{
                   width: 40, height: 40,
@@ -100,6 +76,7 @@ export default function PaymentModal() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: method.color,
+                  flexShrink: 0,
                 }}>
                   <Icon size={20} />
                 </div>

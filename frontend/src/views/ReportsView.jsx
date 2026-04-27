@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAppStore } from '../store/useAppStore'
+import { useToast } from '../store/useToast'
 import { IndianRupee, ShoppingBag, TrendingUp, CreditCard, Smartphone, Banknote, Trophy, BarChart3 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts'
 import EmptyState from '../components/ui/EmptyState'
@@ -16,8 +17,55 @@ const PAYMENT_ICONS = {
   Cash: Banknote,
 }
 
+// Animates a number from 0 → target over ~800ms using rAF
+function useCountUp(target) {
+  const [value, setValue] = useState(0)
+  useEffect(() => {
+    if (target === 0) { setValue(0); return }
+    const duration = 800
+    const start = performance.now()
+    let raf
+    const tick = (now) => {
+      const progress = Math.min((now - start) / duration, 1)
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setValue(Math.round(eased * target))
+      if (progress < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [target])
+  return value
+}
+
+function StatCard({ label, rawValue, prefix = '', color, bgColor, Icon }) {
+  const animated = useCountUp(rawValue)
+  return (
+    <div className="stat-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <div className="stat-label">{label}</div>
+          <div className="stat-value" style={{ color, marginTop: 'var(--sp-2)' }}>
+            {prefix}{animated.toLocaleString('en-IN')}
+          </div>
+        </div>
+        <div style={{
+          width: 44, height: 44,
+          borderRadius: 'var(--radius-md)',
+          background: bgColor,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color,
+        }}>
+          <Icon size={22} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ReportsView() {
   const orders = useAppStore(state => state.orders)
+  const showToast = useToast(s => s.showToast)
 
   // Filter for today's orders
   const today = new Date().toDateString()
@@ -46,8 +94,6 @@ export default function ReportsView() {
     .slice(0, 6)
     .map(([name, qty]) => ({ name, qty }))
 
-  const maxQty = topItems.length > 0 ? topItems[0].qty : 1
-
   return (
     <div style={{ padding: 'var(--sp-8)', height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
@@ -59,74 +105,35 @@ export default function ReportsView() {
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
-        {/* ── Stat Cards Row ──────────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--sp-5)' }}>
-          {/* Revenue */}
-          <div className="stat-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <div className="stat-label">Today's Revenue</div>
-                <div className="stat-value" style={{ color: 'var(--brand)', marginTop: 'var(--sp-2)' }}>
-                  ₹{totalRevenue.toLocaleString('en-IN')}
-                </div>
-              </div>
-              <div style={{
-                width: 44, height: 44,
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--brand-subtle)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--brand)',
-              }}>
-                <IndianRupee size={22} />
-              </div>
-            </div>
-          </div>
-
-          {/* Orders */}
-          <div className="stat-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <div className="stat-label">Total Orders</div>
-                <div className="stat-value" style={{ color: 'var(--info)', marginTop: 'var(--sp-2)' }}>
-                  {todaysOrders.length}
-                </div>
-              </div>
-              <div style={{
-                width: 44, height: 44,
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--info-bg)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--info)',
-              }}>
-                <ShoppingBag size={22} />
-              </div>
-            </div>
-          </div>
-
-          {/* Avg Order */}
-          <div className="stat-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <div className="stat-label">Avg. Order Value</div>
-                <div className="stat-value" style={{ color: 'var(--success)', marginTop: 'var(--sp-2)' }}>
-                  ₹{avgOrderValue}
-                </div>
-              </div>
-              <div style={{
-                width: 44, height: 44,
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--success-bg)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--success)',
-              }}>
-                <TrendingUp size={22} />
-              </div>
-            </div>
-          </div>
+        {/* ── Stat Cards Row — animated counters ──────────── */}
+        <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--sp-5)' }}>
+          <StatCard
+            label="Today's Revenue"
+            rawValue={totalRevenue}
+            prefix="₹"
+            color="var(--brand)"
+            bgColor="var(--brand-subtle)"
+            Icon={IndianRupee}
+          />
+          <StatCard
+            label="Total Orders"
+            rawValue={todaysOrders.length}
+            color="var(--info)"
+            bgColor="var(--info-bg)"
+            Icon={ShoppingBag}
+          />
+          <StatCard
+            label="Avg. Order Value"
+            rawValue={avgOrderValue}
+            prefix="₹"
+            color="var(--success)"
+            bgColor="var(--success-bg)"
+            Icon={TrendingUp}
+          />
         </div>
 
-        {/* ── Charts Row ──────────────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-5)' }}>
+        {/* ── Charts Row ────────────────────────────────── */}
+        <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-5)' }}>
           {/* Payment Breakdown */}
           <div className="glass-card" style={{ padding: 'var(--sp-6)' }}>
             <h4 style={{ marginBottom: 'var(--sp-5)', color: 'var(--text-secondary)' }}>Payment Methods</h4>

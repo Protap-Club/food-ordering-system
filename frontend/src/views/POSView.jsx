@@ -6,19 +6,14 @@ import InvoiceModal from '../components/pos/InvoiceModal'
 
 export default function POSView() {
   return (
-    <div style={{ 
-      display: 'flex', 
-      height: '100%', 
-      padding: '24px', 
-      gap: '24px' 
-    }}>
-      {/* Left side: Menu */}
-      <div style={{ flex: '1 1 65%', height: '100%' }}>
+    <div className="pos-layout">
+      {/* Left: Menu */}
+      <div className="pos-menu-pane">
         <MenuPanel />
       </div>
 
-      {/* Right side: Order Panel */}
-      <div style={{ flex: '0 0 35%', minWidth: '350px', height: '100%' }}>
+      {/* Right: Order Panel */}
+      <div className="pos-order-pane">
         <OrderPanel />
       </div>
 

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import StaffLayout from './layouts/StaffLayout'
 import { useAppStore } from './store/useAppStore'
+import ToastContainer from './components/ui/Toast'
 
 import POSView from './views/POSView'
 import KDSView from './views/KDSView'
@@ -17,12 +18,15 @@ export default function App() {
   }, [fetchInitialData])
 
   return (
-    <StaffLayout>
-      {currentView === 'pos' && <POSView />}
-      {currentView === 'kds' && <KDSView />}
-      {currentView === 'tables' && <TablesView />}
-      {currentView === 'menu' && <MenuManagerView />}
-      {currentView === 'reports' && <ReportsView />}
-    </StaffLayout>
+    <>
+      <StaffLayout>
+        {currentView === 'pos' && <POSView />}
+        {currentView === 'kds' && <KDSView />}
+        {currentView === 'tables' && <TablesView />}
+        {currentView === 'menu' && <MenuManagerView />}
+        {currentView === 'reports' && <ReportsView />}
+      </StaffLayout>
+      <ToastContainer />
+    </>
   )
 }

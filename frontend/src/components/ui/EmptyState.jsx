@@ -22,6 +22,7 @@ export default function EmptyState({ icon: Icon, title, subtitle }) {
           alignItems: 'center',
           justifyContent: 'center',
           color: 'var(--brand)',
+          animation: 'floatIcon 3s ease-in-out infinite',
         }}>
           <Icon size={28} strokeWidth={1.5} />
         </div>
