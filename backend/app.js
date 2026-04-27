@@ -10,6 +10,8 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const searchRoutes = require('./routes/searchRoutes');
+const tableRoutes = require('./routes/tableRoutes');
+const menuRoutes = require('./routes/menuRoutes');
 
 const app = express();
 
@@ -61,6 +63,8 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/tables', tableRoutes);
+app.use('/api/menu', menuRoutes);
 
 // 404 handler
 app.use((req, res) => {
