@@ -77,8 +77,8 @@ export default function ReportsView() {
   // Payment Breakdown
   const paymentData = ['UPI', 'Card', 'Cash'].map(method => ({
     name: method,
-    value: todaysOrders.filter(o => o.paymentMethod === method).length,
-    revenue: todaysOrders.filter(o => o.paymentMethod === method).reduce((s, o) => s + o.total, 0),
+    value: todaysOrders.filter(o => o.payment?.method === method).length,
+    revenue: todaysOrders.filter(o => o.payment?.method === method).reduce((s, o) => s + o.total, 0),
   }))
 
   // Top Items
