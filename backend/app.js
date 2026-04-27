@@ -25,17 +25,25 @@ const allowedOrigins = (process.env.CORS_ORIGIN || '')
 const corsOptions = {
   credentials: true,
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+    // Allow server-to-server requests (no origin) or wildcard
+    if (!origin || allowedOrigins.includes('*')) {
       return callback(null, true);
     }
 
-    const error = new Error(`CORS blocked request from origin: ${origin}`);
-    error.statusCode = 403;
-    return callback(error);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // FIX: Return null instead of an error object so the response
+    // isn't blocked — the browser will handle the rejected origin.
+    return callback(null, false);
   },
 };
 
+// FIX: Handle preflight OPTIONS requests explicitly before any other middleware
+app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
+
 app.use(express.json({ limit: '1mb' }));
 
 mongoose.set('strictQuery', true);
