@@ -22,10 +22,16 @@
   --bg-elevated: #2C2C2E;
   --bg-hover: #3A3A3C;
 
-  /* Glass */
-  --glass-bg: rgba(28, 28, 30, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-highlight: rgba(255, 255, 255, 0.03);
+  /* Glass — strengthened for true frosted effect */
+  --glass-bg: rgba(18, 18, 20, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.04);
+  --glass-inner: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* Ambient orbs — make backdrop-filter visible */
+  --orb-brand: rgba(232, 145, 58, 0.18);
+  --orb-warm: rgba(200, 80, 30, 0.12);
+  --orb-cool: rgba(96, 165, 250, 0.06);
 
   /* Text — Apple-inspired gray scale */
   --text-primary: #F5F5F7;
@@ -93,6 +99,10 @@
   /* Sidebar */
   --sidebar-width: 88px;
   --sidebar-expanded: 220px;
+
+  /* Enhanced shadows with brand glow */
+  --shadow-brand-sm: 0 2px 12px rgba(232, 145, 58, 0.2);
+  --shadow-brand-md: 0 4px 24px rgba(232, 145, 58, 0.3);
 }
 
 /* ── Light Theme Override ─────────────────────────────────────────────────── */
@@ -110,9 +120,13 @@
   --bg-elevated: #FFFFFF;
   --bg-hover: #F0EFE9;
 
-  --glass-bg: rgba(255, 255, 255, 0.78);
-  --glass-border: rgba(0, 0, 0, 0.06);
-  --glass-highlight: rgba(255, 255, 255, 0.5);
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(0, 0, 0, 0.07);
+  --glass-highlight: rgba(255, 255, 255, 0.6);
+  --glass-inner: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --orb-brand: rgba(209, 126, 47, 0.12);
+  --orb-warm: rgba(180, 80, 20, 0.08);
+  --orb-cool: rgba(37, 99, 235, 0.05);
 
   --text-primary: #1A1A1A;
   --text-secondary: #6B6B6B;
@@ -143,6 +157,8 @@
   --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.12);
   --shadow-glow: 0 0 20px rgba(209, 126, 47, 0.1);
   --shadow-float: 0 20px 40px rgba(0, 0, 0, 0.08);
+  --shadow-brand-sm: 0 2px 12px rgba(209, 126, 47, 0.15);
+  --shadow-brand-md: 0 4px 24px rgba(209, 126, 47, 0.2);
 }
 
 /* ── Global Reset ─────────────────────────────────────────────────────────── */
@@ -244,38 +260,191 @@ input::placeholder {
   background: var(--text-tertiary);
 }
 
+/* ── Ambient Visual Layer ─────────────────────────────────────────────────── */
+/* Gradient orbs positioned behind glass panels — makes backdrop-filter visible */
+.ambient-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform, opacity;
+}
+
+/* Primary amber orb — top-left, bleeding warmth into sidebar */
+.ambient-orb--primary {
+  width: 520px;
+  height: 520px;
+  top: -160px;
+  left: -80px;
+  background: radial-gradient(circle, var(--orb-brand) 0%, transparent 70%);
+  animation: orbDrift1 18s ease-in-out infinite;
+}
+
+/* Secondary warm orb — bottom-right, anchors the menu panel */
+.ambient-orb--secondary {
+  width: 420px;
+  height: 420px;
+  bottom: -100px;
+  right: 10%;
+  background: radial-gradient(circle, var(--orb-warm) 0%, transparent 70%);
+  animation: orbDrift2 24s ease-in-out infinite;
+}
+
+/* Accent cool orb — centre, adds depth between panels */
+.ambient-orb--accent {
+  width: 300px;
+  height: 300px;
+  top: 40%;
+  left: 38%;
+  background: radial-gradient(circle, var(--orb-cool) 0%, transparent 70%);
+  animation: orbDrift3 30s ease-in-out infinite;
+}
+
 /* ── Glass Panels (Antigravity Design) ────────────────────────────────────── */
+/* backdrop-filter now has ambient orbs behind it — effect is truly visible */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
   border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-inner);
 }
 
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(16px) saturate(1.1);
-  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), var(--glass-inner);
   transition: transform var(--duration-normal) var(--ease-out),
               box-shadow var(--duration-normal) var(--ease-out),
               border-color var(--duration-normal) ease;
 }
 
 .glass-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,0.08), var(--glass-inner);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .glass-panel {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
+  box-shadow: var(--glass-inner);
+}
+
+/* ── Sidebar Nav CSS Classes (replaces JS onMouseEnter/Leave) ─────────────── */
+.nav-item {
+  width: 100%;
+  height: 52px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 1px solid transparent;
+  position: relative;
+  transition: all var(--duration-normal) var(--ease-out);
+  color: var(--text-tertiary);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-item:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.nav-item--active {
+  color: var(--brand) !important;
+  background: var(--brand-light) !important;
+  border-color: rgba(232, 145, 58, 0.2) !important;
+}
+
+.nav-item--active:hover {
+  background: var(--brand-light) !important;
+}
+
+/* Active pill indicator */
+.nav-item--active .nav-active-pill {
+  opacity: 1;
+  transform: translateY(-50%) scaleY(1);
+}
+
+.nav-active-pill {
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 3px;
+  height: 24px;
+  border-radius: 0 3px 3px 0;
+  background: var(--brand);
+  box-shadow: 0 0 10px rgba(232, 145, 58, 0.6);
+  opacity: 0;
+  transition: opacity var(--duration-normal) ease, transform var(--duration-normal) var(--ease-spring);
+}
+
+/* Theme toggle + utility icon buttons */
+.icon-btn {
+  width: 100%;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  outline: none;
+  transition: all var(--duration-normal) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-btn:hover {
+  background: var(--bg-hover);
+  color: var(--warning);
+}
+
+/* Staff avatar */
+.staff-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--brand-light) 0%, var(--bg-elevated) 100%);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--brand);
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.staff-avatar:hover {
+  border-color: var(--brand);
+  box-shadow: var(--shadow-glow);
+  transform: scale(1.05);
 }
 
 /* ── Buttons ──────────────────────────────────────────────────────────────── */
@@ -561,11 +730,60 @@ input::placeholder {
   to { transform: rotate(360deg); }
 }
 
+/* Ambient orb drift — slow, organic movement */
+@keyframes orbDrift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(40px, 60px) scale(1.08); }
+  66%       { transform: translate(-30px, 30px) scale(0.96); }
+}
+
+@keyframes orbDrift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40%       { transform: translate(-50px, -40px) scale(1.06); }
+  70%       { transform: translate(30px, -20px) scale(0.94); }
+}
+
+@keyframes orbDrift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(20px, -30px) scale(1.1); }
+}
+
+/* View transition — smooth page swap */
+@keyframes viewEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Cart add pulse — brand glow ring */
+@keyframes cartPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(232, 145, 58, 0.5); }
+  70%  { box-shadow: 0 0 0 12px rgba(232, 145, 58, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(232, 145, 58, 0); }
+}
+
+/* EmptyState floating icon */
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* Toast slide in from right */
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 /* ── Animation Utilities ──────────────────────────────────────────────────── */
-.animate-fadeIn { animation: fadeIn var(--duration-normal) var(--ease-out) both; }
-.animate-fadeInUp { animation: fadeInUp var(--duration-slow) var(--ease-out) both; }
-.animate-scaleIn { animation: scaleIn var(--duration-normal) var(--ease-spring) both; }
-.animate-bounceIn { animation: bounceIn 0.5s var(--ease-spring) both; }
+.animate-fadeIn    { animation: fadeIn    var(--duration-normal) var(--ease-out)    both; }
+.animate-fadeInUp  { animation: fadeInUp  var(--duration-slow)   var(--ease-out)    both; }
+.animate-scaleIn   { animation: scaleIn   var(--duration-normal) var(--ease-spring) both; }
+.animate-bounceIn  { animation: bounceIn  0.5s                   var(--ease-spring) both; }
+.animate-viewEnter { animation: viewEnter var(--duration-slow)   var(--ease-out)    both; }
+.cart-pulse        { animation: cartPulse 0.6s var(--ease-out); }
+
+/* Toast entry animation */
+.toast { animation: toastSlideIn var(--duration-normal) var(--ease-spring) both; }
+
 
 /* Staggered children entrance */
 .stagger-children > * { animation: fadeInUp var(--duration-slow) var(--ease-out) both; }
@@ -688,6 +906,403 @@ input::placeholder {
   background: var(--brand);
 }
 
+/* ── MenuCard BEM ─────────────────────────────────────────────────────────── */
+.menu-card {
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  will-change: transform;
+}
+
+.menu-card--unavailable {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+}
+
+/* Image container — clips the zoom effect */
+.menu-card__image {
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+  /* Image zoom on card hover */
+  transition: transform 0.5s var(--ease-out);
+}
+
+.menu-card:hover .menu-card__image {
+  transform: scale(1.06);
+}
+
+/* Gradient fade from image into card body */
+.menu-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 35%, var(--bg-panel) 100%);
+  pointer-events: none;
+}
+
+/* Bestseller badge */
+.menu-card__bestseller {
+  position: absolute;
+  top: var(--sp-2);
+  left: var(--sp-2);
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  color: #000;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+}
+
+/* Sold-out ribbon */
+.menu-card__sold-out {
+  position: absolute;
+  top: var(--sp-2);
+  right: var(--sp-2);
+  background: var(--danger);
+  color: white;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Quick-add button — hidden by default, revealed on hover via CSS */
+.menu-card__add-btn {
+  position: absolute;
+  bottom: var(--sp-2);
+  right: var(--sp-2);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(232, 145, 58, 0.45);
+  opacity: 0;
+  transform: scale(0.75);
+  transition: opacity var(--duration-normal) var(--ease-spring),
+              transform var(--duration-normal) var(--ease-spring);
+  pointer-events: none;
+}
+
+.menu-card:hover .menu-card__add-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Card body */
+.menu-card__body {
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* ── Payment Method Buttons ───────────────────────────────────────────────── */
+/* CSS-only hover replaces JS onMouseEnter/Leave in PaymentModal */
+.payment-method-btn {
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--bg-surface);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+  outline: none;
+  transition: background var(--duration-normal) var(--ease-out),
+              border-color var(--duration-normal) ease,
+              transform var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) ease;
+}
+
+.payment-method-btn:hover {
+  background: var(--bg-hover);
+  transform: translateY(-2px);
+}
+
+.payment-method-btn:active {
+  transform: scale(0.97);
+}
+
+/* ── Phase 2: Remaining CSS-Only Hover Classes ───────────────────────────── */
+
+/* Delete button in OrderPanel */
+.delete-btn {
+  color: var(--danger);
+  padding: var(--sp-1);
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  outline: none;
+  transition: background var(--duration-fast) ease, transform var(--duration-fast) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.delete-btn:hover {
+  background: var(--danger-bg);
+  transform: scale(1.1);
+}
+
+/* Resume held-order button in OrderPanel */
+.resume-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--warning);
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  cursor: pointer;
+  font-family: inherit;
+  outline: none;
+  flex-shrink: 0;
+  transition: background var(--duration-fast) ease, transform var(--duration-fast) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.resume-btn:hover {
+  background: var(--warning);
+  color: var(--text-inverse);
+  transform: scale(1.04);
+}
+
+/* Menu table row in MenuManagerView */
+.menu-row {
+  border-bottom: 1px solid var(--glass-border);
+  transition: background var(--duration-fast) ease;
+  cursor: default;
+}
+
+.menu-row:hover {
+  background: var(--bg-hover);
+}
+
+/* KDS action button */
+.kds-action-btn {
+  padding: var(--sp-4);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  outline: none;
+  transition: filter var(--duration-fast) ease, transform var(--duration-fast) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kds-action-btn:hover {
+  filter: brightness(1.15);
+}
+
+.kds-action-btn:active {
+  transform: scale(0.98);
+}
+
+/* ── Phase 3: Desktop Sidebar Layout Classes ─────────────────────────────── */
+
+.desktop-sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--sp-5) 0;
+  gap: var(--sp-3);
+  border-right: 1px solid var(--glass-border);
+  z-index: 10;
+  position: relative;
+  transition: width var(--duration-slow) var(--ease-out);
+}
+
+.sidebar-brand {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--brand) 0%, #C6793A 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: white;
+  box-shadow: var(--shadow-brand-md);
+  margin-bottom: var(--sp-2);
+  flex-shrink: 0;
+  letter-spacing: -0.03em;
+}
+
+.sidebar-divider {
+  width: 60%;
+  height: 1px;
+  background: var(--border-color);
+  margin: var(--sp-1) 0;
+  flex-shrink: 0;
+}
+
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  align-items: center;
+  width: 100%;
+  padding: 0 var(--sp-3);
+}
+
+/* ── Phase 3: Mobile Header ──────────────────────────────────────────────── */
+
+.mobile-header {
+  display: none; /* shown via media query */
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  padding: 0 var(--sp-4);
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.hamburger-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  border: var(--border);
+  color: var(--text-primary);
+  cursor: pointer;
+  font: inherit;
+  outline: none;
+  transition: background var(--duration-fast) ease;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+  background: var(--bg-hover);
+}
+
+.mobile-brand {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--brand) 0%, #C6793A 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  color: white;
+}
+
+/* ── Phase 3: Mobile Drawer ──────────────────────────────────────────────── */
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 200;
+  animation: fadeIn var(--duration-normal) ease;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  z-index: 300;
+  border-right: 1px solid var(--glass-border);
+  transform: translateX(-100%);
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+.mobile-drawer--open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-5) var(--sp-5) var(--sp-4);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.drawer-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--glass-border);
+}
+
+/* ── Phase 3: App Main & POS Layout ─────────────────────────────────────── */
+
+.app-main {
+  flex: 1;
+  background: var(--bg-base);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  transition: background var(--duration-slow) ease;
+}
+
+/* POS two-pane layout */
+.pos-layout {
+  display: flex;
+  height: 100%;
+  padding: var(--sp-6);
+  gap: var(--sp-6);
+}
+
+.pos-menu-pane {
+  flex: 1 1 65%;
+  height: 100%;
+  min-width: 0;
+}
+
+.pos-order-pane {
+  flex: 0 0 360px;
+  height: 100%;
+}
+
 /* ── Reduced Motion ───────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -699,36 +1314,96 @@ input::placeholder {
   }
 }
 
-/* ── Responsive Breakpoints ───────────────────────────────────────────────── */
+/* ── Responsive: Tablet (≤ 1024px) ──────────────────────────────────────── */
 @media (max-width: 1024px) {
   :root {
-    --sidebar-width: 64px;
+    --sidebar-width: 72px;
   }
-  .stat-card {
-    padding: var(--sp-4);
-  }
-  .stat-value {
-    font-size: 1.75rem;
+
+  .stat-card { padding: var(--sp-4); }
+  .stat-value { font-size: 1.75rem; }
+
+  .pos-order-pane {
+    flex: 0 0 300px;
   }
 }
 
+/* ── Responsive: Mobile (≤ 768px) ───────────────────────────────────────── */
 @media (max-width: 768px) {
-  :root {
-    --sidebar-width: 0px;
+  /* Hide desktop sidebar, show mobile header */
+  .desktop-sidebar {
+    display: none;
   }
+
+  .mobile-header {
+    display: flex;
+  }
+
+  /* Main content starts below mobile header */
+  .app-main {
+    padding-top: 60px;
+    overflow-y: auto;
+  }
+
   body {
     font-size: 13px;
-    overflow: auto;
   }
-  .stat-value {
-    font-size: 1.5rem;
+
+  /* POS stacks vertically on mobile */
+  .pos-layout {
+    flex-direction: column;
+    padding: var(--sp-4);
+    gap: var(--sp-4);
+    height: auto;
+    min-height: calc(100% - 60px);
   }
-  .glass-card {
-    border-radius: var(--radius-md);
+
+  .pos-menu-pane {
+    flex: none;
+    height: auto;
+    min-height: 50vh;
   }
+
+  .pos-order-pane {
+    flex: none;
+    height: auto;
+  }
+
+  .stat-value { font-size: 1.5rem; }
+
+  .glass-card { border-radius: var(--radius-md); }
+
   .modal-content {
     margin: var(--sp-4);
     max-width: calc(100vw - var(--sp-8));
     border-radius: var(--radius-lg);
   }
+
+  /* Reports: single column stat cards */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Charts: full width */
+  .charts-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
+
+/* ── Responsive: Small phone (≤ 480px) ──────────────────────────────────── */
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pos-layout {
+    padding: var(--sp-3);
+    gap: var(--sp-3);
+  }
+
+  .modal-content {
+    margin: var(--sp-2);
+    max-width: calc(100vw - var(--sp-4));
+  }
+}
+
