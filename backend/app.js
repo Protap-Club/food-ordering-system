@@ -1,5 +1,4 @@
 const express = require('express');
-const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
@@ -17,46 +16,37 @@ const menuRoutes = require('./routes/menuRoutes');
 dotenv.config();
 const app = express();
 
-const allowedOrigins = (process.env.CORS_ORIGIN || '')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+// ✅ Manual CORS — no cors package, no env var dependency
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const allowedOrigins = [
+    'https://frontend-eta-orcin-53.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000',
+  ];
 
-const corsOptions = {
-  credentials: true,
-  origin(origin, callback) {
-    // Allow server-to-server requests (no origin) or wildcard
-    if (!origin || allowedOrigins.includes('*')) {
-      return callback(null, true);
-    }
+  if (!origin || allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,PATCH,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  }
 
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+  // Handle preflight immediately
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
 
-    // FIX: Return null instead of an error object so the response
-    // isn't blocked — the browser will handle the rejected origin.
-    return callback(null, false);
-  },
-};
-
-// FIX: Handle preflight OPTIONS requests explicitly before any other middleware
-app.options('*', cors(corsOptions));
-app.use(cors(corsOptions));
+  next();
+});
 
 app.use(express.json({ limit: '1mb' }));
-
 mongoose.set('strictQuery', true);
 
 app.get('/', (req, res) => {
-  res.json({
-    status: 'ok',
-    service: 'FoodRush API',
-    health: '/api/health',
-  });
+  res.json({ status: 'ok', service: 'FoodRush API', health: '/api/health' });
 });
 
-// Health route
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -65,7 +55,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/orders', orderRoutes);
@@ -85,17 +74,9 @@ app.use((req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || err.status || 500;
-
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({ error: err.message });
-  }
-  if (err.name === 'CastError') {
-    return res.status(400).json({ error: 'Invalid identifier' });
-  }
-  if (err.code === 11000) {
-    return res.status(409).json({ error: 'Duplicate record' });
-  }
-
+  if (err.name === 'ValidationError') return res.status(400).json({ error: err.message });
+  if (err.name === 'CastError') return res.status(400).json({ error: 'Invalid identifier' });
+  if (err.code === 11000) return res.status(409).json({ error: 'Duplicate record' });
   console.error(err);
   res.status(statusCode).json({
     error: statusCode === 500 ? 'Internal server error' : err.message,
