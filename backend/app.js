@@ -40,6 +40,14 @@ app.use(express.json({ limit: '1mb' }));
 
 mongoose.set('strictQuery', true);
 
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'FoodRush API',
+    health: '/api/health',
+  });
+});
+
 // Health route
 app.get('/api/health', (req, res) => {
   res.json({

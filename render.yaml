@@ -1,9 +1,15 @@
 services:
   - type: web
     name: foodrush-backend-protap
+    repo: https://github.com/Protap-Club/food-ordering-system
     runtime: node
     plan: free
+    branch: main
+    autoDeployTrigger: commit
     rootDir: backend
+    buildFilter:
+      paths:
+        - backend/**
     buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /api/health
