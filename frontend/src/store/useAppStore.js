@@ -39,6 +39,7 @@ export const useAppStore = create(
           })
         } catch (error) {
           console.error("Failed to fetch initial data:", error)
+          useToast.getState().showToast({ type: 'error', message: 'Failed to load menu and table data. Check that the backend API is running.' })
         }
       },
 
