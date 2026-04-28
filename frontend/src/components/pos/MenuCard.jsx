@@ -5,6 +5,52 @@ import TasteChip from '../ui/TasteChip'
 import StarRating from '../ui/StarRating'
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1495195134817-aeb325a55b65?w=400&h=300&fit=crop&q=80'
+const IMAGE_FIXES = {
+  'Irani Chai': {
+    image: 'https://images.pexels.com/photos/13377433/pexels-photo-13377433.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1563639234920-11f4085c0243',
+  },
+  'Dalgona Coffee': {
+    image: 'https://images.pexels.com/photos/4116728/pexels-photo-4116728.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1612543073770-3c0a37a3ee5e',
+  },
+  'Fresh Lime Soda': {
+    image: 'https://images.pexels.com/photos/9996446/pexels-photo-9996446.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed514',
+  },
+  'Rose Sharbat': {
+    image: 'https://images.pexels.com/photos/17379723/pexels-photo-17379723.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64',
+  },
+  'Vada Pav': {
+    image: 'https://images.pexels.com/photos/15017417/pexels-photo-15017417.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1606491956689-2ea866880049',
+  },
+  'Bread Pakora': {
+    image: 'https://images.pexels.com/photos/30174012/pexels-photo-30174012.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b',
+  },
+  'Aloo Chaat': {
+    image: 'https://images.pexels.com/photos/16171917/pexels-photo-16171917.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086',
+  },
+  'Rajma Chawal': {
+    image: 'https://images.pexels.com/photos/12737912/pexels-photo-12737912.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe',
+  },
+  'Chole Bhature': {
+    image: 'https://images.pexels.com/photos/11818239/pexels-photo-11818239.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027',
+  },
+  'Gulab Jamun': {
+    image: 'https://images.pexels.com/photos/11887844/pexels-photo-11887844.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1666190073498-d8a92cba26c8',
+  },
+  'Matka Kulfi': {
+    image: 'https://images.pexels.com/photos/29699512/pexels-photo-29699512.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+    oldPrefix: 'https://images.unsplash.com/photo-1567206563064-6f60f40a2b57',
+  },
+}
 
 // Spice level config
 const SPICE_COLORS = ['', '#34D399', '#FBBF24', '#FB923C', '#EF4444']
@@ -15,7 +61,12 @@ export default function MenuCard({ item }) {
   const [imgError, setImgError] = useState(false)
   const cardRef = useRef(null)
 
-  const imageUrl = (!imgError && item.image) ? item.image : FALLBACK_IMAGE
+  const itemImage = item.image || item.imageUrl
+  const imageFix = IMAGE_FIXES[item.name]
+  const resolvedImage = imageFix && (!itemImage || itemImage.startsWith(imageFix.oldPrefix))
+    ? imageFix.image
+    : itemImage
+  const imageUrl = (!imgError && resolvedImage) ? resolvedImage : FALLBACK_IMAGE
   const tasteProfiles = item.tasteProfile || []
   const tags = item.tags || []
   const allergens = item.allergens || []

@@ -50,7 +50,7 @@ export const MENU_ITEMS = [
     isBestseller: false,
     description: "Thick, creamy Hyderabadi style",
     emoji: "🍵",
-    imageUrl: null,
+    imageUrl: "https://images.pexels.com/photos/13377433/pexels-photo-13377433.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
   },
   // COFFEE
   {
@@ -112,7 +112,7 @@ export const MENU_ITEMS = [
     isBestseller: false,
     description: "Sweet / salt / masala",
     emoji: "🥤",
-    imageUrl: null,
+    imageUrl: "https://images.pexels.com/photos/9996446/pexels-photo-9996446.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
   },
   {
     id: "item_010",
@@ -149,7 +149,7 @@ export const MENU_ITEMS = [
     isBestseller: true,
     description: "Mumbai style, green + tamarind chutney",
     emoji: "🍔",
-    imageUrl: null,
+    imageUrl: "https://images.pexels.com/photos/15017417/pexels-photo-15017417.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
   },
   {
     id: "item_013",
@@ -197,7 +197,7 @@ export const MENU_ITEMS = [
     isBestseller: false,
     description: "Aloo stuffed, fried golden",
     emoji: "🟡",
-    imageUrl: null,
+    imageUrl: "https://images.pexels.com/photos/30174012/pexels-photo-30174012.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
   },
   // MEALS
   {
@@ -210,7 +210,7 @@ export const MENU_ITEMS = [
     isBestseller: true,
     description: "Home-style, ghee tadka, pickle",
     emoji: "🍛",
-    imageUrl: null,
+    imageUrl: "https://images.pexels.com/photos/12737912/pexels-photo-12737912.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
   },
   {
     id: "item_018",
@@ -222,7 +222,7 @@ export const MENU_ITEMS = [
     isBestseller: false,
     description: "Punjabi style, 2 bhature",
     emoji: "🫓",
-    imageUrl: null,
+    imageUrl: "https://images.pexels.com/photos/11818239/pexels-photo-11818239.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
   },
   {
     id: "item_019",
@@ -259,7 +259,7 @@ export const MENU_ITEMS = [
     isBestseller: false,
     description: "Warm, 2 pc, rabri",
     emoji: "🟤",
-    imageUrl: null,
+    imageUrl: "https://images.pexels.com/photos/11887844/pexels-photo-11887844.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
   },
   {
     id: "item_022",
@@ -271,7 +271,7 @@ export const MENU_ITEMS = [
     isBestseller: true,
     description: "Rose, pista, kesar — seasonal",
     emoji: "🍦",
-    imageUrl: null,
+    imageUrl: "https://images.pexels.com/photos/29699512/pexels-photo-29699512.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
   },
   {
     id: "item_023",
