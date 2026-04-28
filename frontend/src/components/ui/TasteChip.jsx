@@ -1,5 +1,5 @@
 import React from 'react'
-import { Flame, Droplets, Cookie, Wind, Leaf, Sparkles, CloudRain, Soup } from 'lucide-react'
+import { Flame, Droplets, Cookie, Wind, Leaf, Sparkles, CloudRain, Soup, Flower2 } from 'lucide-react'
 
 const TASTE_CONFIG = {
   spicy:  { icon: Flame,      color: '#FF6B6B', bg: 'rgba(255,107,107,0.12)', label: 'Spicy' },
@@ -15,6 +15,7 @@ const TASTE_CONFIG = {
   refreshing: { icon: Leaf,       color: '#2DD4BF', bg: 'rgba(45,212,191,0.12)',  label: 'Refreshing' },
   umami:      { icon: Sparkles,   color: '#FB923C', bg: 'rgba(251,146,60,0.12)',  label: 'Umami' },
   soft:       { icon: Cookie,     color: '#FCA5A5', bg: 'rgba(252,165,165,0.12)', label: 'Soft' },
+  floral:     { icon: Flower2,    color: '#F9A8D4', bg: 'rgba(249,168,212,0.12)', label: 'Floral' },
 }
 
 export default function TasteChip({ taste }) {
