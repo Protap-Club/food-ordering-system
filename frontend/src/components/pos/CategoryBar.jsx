@@ -4,12 +4,18 @@ import { LayoutGrid } from 'lucide-react'
 
 const CATEGORY_EMOJI = {
   'All': null,
+  'Chai': '🍵',
+  'Coffee': '☕',
+  'Cold Drinks': '🥤',
+  'Snacks': '🍿',
+  'Meals': '🍛',
+  'Desserts': '🍰',
+  // Fallbacks for any dynamic categories
   'Starters': '🥗',
   'Main Course': '🍛',
   'Breads': '🫓',
   'Rice': '🍚',
   'Beverages': '🥤',
-  'Desserts': '🍰',
   'Sides': '🥘',
   'Soups': '🍲',
   'Salads': '🥬',
@@ -17,8 +23,6 @@ const CATEGORY_EMOJI = {
   'Pasta': '🍝',
   'Burgers': '🍔',
   'Sandwiches': '🥪',
-  'Coffee': '☕',
-  'Snacks': '🍿',
 }
 
 export default function CategoryBar() {
