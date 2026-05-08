@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   const allowedOrigins = configuredOrigins.length > 0
     ? configuredOrigins
     : [
-        'https://frontend-eta-orcin-53.vercel.app',
+        'https://food-ordering-system-nu.vercel.app/',
         'http://localhost:5173',
         'http://localhost:3000',
       ];
@@ -90,3 +90,4 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
+``
