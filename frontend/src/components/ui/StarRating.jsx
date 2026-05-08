@@ -2,45 +2,69 @@ import React from 'react'
 
 // Pure-CSS star using unicode — zero alignment issues
 export default function StarRating({ rating = 0, count = 0, size = 14, showCount = true }) {
+  const full = Math.floor(rating)
+  const fraction = parseFloat((rating - full).toFixed(2))  // e.g. 0.2 for 4.2, 0.5 for 4.5
+  const hasPartial = fraction > 0
   const stars = []
+  const starColor = '#FBBF24'
+  const emptyStarColor = 'var(--text-muted)'
+  const starBoxStyle = {
+    position: 'relative',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: size,
+    height: size,
+    flex: `0 0 ${size}px`,
+    lineHeight: 0,
+    verticalAlign: 'middle',
+  }
+  const starOverlayStyle = {
+    position: 'absolute',
+    inset: 0,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 
   for (let i = 0; i < 5; i++) {
-    const fill = Math.max(0, Math.min(1, rating - i)) // 0, partial, or 1
-
-    stars.push(
-      <span
-        key={i}
-        style={{
-          position: 'relative',
-          display: 'inline-block',
-          width: size,
-          height: size,
-          fontSize: size,
-          lineHeight: `${size}px`,
-          color: 'var(--text-muted)',
-          userSelect: 'none',
-        }}
-      >
-        {/* Empty star background */}
-        <span style={{ position: 'absolute', inset: 0, textAlign: 'center' }}>★</span>
-        {/* Filled portion clipped by width */}
-        {fill > 0 && (
-          <span style={{
-            position: 'absolute',
-            inset: 0,
-            textAlign: 'center',
-            color: '#FBBF24',
-            overflow: 'hidden',
-            width: `${fill * 100}%`,
-          }}>★</span>
-        )}
-      </span>
-    )
+    if (i < full) {
+      stars.push(
+        <span key={i} style={starBoxStyle}>
+          <Star size={size} fill={starColor} color={starColor} strokeWidth={0} />
+        </span>
+      )
+    } else if (i === full && hasPartial) {
+      const clipRight = Math.round((1 - fraction) * 100)  // e.g. 80% clipped for 0.2 fraction
+      stars.push(
+        <span key={i} style={starBoxStyle}>
+          {/* Empty outline star — background */}
+          <span style={starOverlayStyle}>
+            <Star size={size} fill="none" color={emptyStarColor} strokeWidth={1.5} />
+          </span>
+          {/* Filled star — clipped based on exact fractional fill percentage */}
+          <span style={{ ...starOverlayStyle, clipPath: `inset(0 ${clipRight}% 0 0)` }}>
+            <Star size={size} fill={starColor} color={starColor} strokeWidth={0} />
+          </span>
+        </span>
+      )
+    } else {
+      stars.push(
+        <span key={i} style={starBoxStyle}>
+          <Star size={size} fill="none" color={emptyStarColor} strokeWidth={1.5} />
+        </span>
+      )
+    }
   }
 
   return (
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 0 }}>
+    <div style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '3px',
+      lineHeight: 0,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1px', lineHeight: 0 }}>
         {stars}
       </span>
       {showCount && rating > 0 && (
