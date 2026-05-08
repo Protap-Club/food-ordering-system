@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   const allowedOrigins = configuredOrigins.length > 0
     ? configuredOrigins
     : [
-        'https://food-ordering-system-nu.vercel.app/',
+        'https://food-ordering-system-nu.vercel.app',
         'http://localhost:5173',
         'http://localhost:3000',
       ];
