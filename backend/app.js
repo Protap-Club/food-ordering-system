@@ -15,15 +15,21 @@ const menuRoutes = require('./routes/menuRoutes');
 
 dotenv.config();
 const app = express();
+const configuredOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 // ✅ Manual CORS — no cors package, no env var dependency
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  const allowedOrigins = [
-    'https://frontend-eta-orcin-53.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:3000',
-  ];
+  const allowedOrigins = configuredOrigins.length > 0
+    ? configuredOrigins
+    : [
+        'https://frontend-eta-orcin-53.vercel.app',
+        'http://localhost:5173',
+        'http://localhost:3000',
+      ];
 
   if (!origin || allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin || '*');

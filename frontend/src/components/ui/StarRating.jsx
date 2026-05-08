@@ -1,4 +1,5 @@
 import React from 'react'
+import { Star } from 'lucide-react'
 
 // Pure-CSS star using unicode — zero alignment issues
 export default function StarRating({ rating = 0, count = 0, size = 14, showCount = true }) {
@@ -66,7 +67,7 @@ export default function StarRating({ rating = 0, count = 0, size = 14, showCount
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1px', lineHeight: 0 }}>
         {stars}
-      </span>
+      </div>
       {showCount && rating > 0 && (
         <span style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)', fontWeight: 500, marginLeft: '2px' }}>
           {rating.toFixed(1)}{count > 0 ? ` (${count})` : ''}
